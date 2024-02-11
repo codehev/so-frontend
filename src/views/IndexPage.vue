@@ -9,13 +9,13 @@
     <MyDivider />
     <a-tabs v-model:activeKey="activeKey" @change="onTabChange">
       <a-tab-pane key="article" tab="文章">
-        <PostList :data="result" />
+        <PostList :data="postPageData" />
       </a-tab-pane>
       <a-tab-pane key="picture" tab="图片" force-render>
-        <PictureList />
+        <PictureList :data="picturePageData" />
       </a-tab-pane>
       <a-tab-pane key="user" tab="用户">
-        <UserList />
+        <UserList :data="userPageData" />
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -28,29 +28,49 @@ import UserList from "@/components/UserList.vue";
 import PictureList from "@/components/PictureList.vue";
 import MyDivider from "@/components/MyDivider.vue";
 import { useRoute, useRouter } from "vue-router";
-import { listPost } from "@/service/searchApi";
-
-let result = ref({});
-//异步请求获取初始数据，必须在mounted中使用，因为mounted在组件挂载后执行，
-// 直接setup中写异步请求可能在组件挂载前执行，导致页面无法渲染
-onMounted(async () => {
-  result.value = await listPost({
-    current: 1,
-    pageSize: 10,
-  });
-  console.log("result============>" + JSON.stringify(result.value));
-});
+import { listPicture, listPost, listUser } from "@/service/searchApi";
 
 const router = useRouter();
 const route = useRoute();
 
 // tab页签key（标签页选项的key，路径参数params值）
 const activeKey = ref("article");
+
+interface QueryRequest {
+  searchText?: string;
+  current: number;
+  pageSize: number;
+}
+
 // 搜索参数，？之后
-let searchParams = ref({
+let searchParams = ref<QueryRequest>({
   searchText: "",
   current: 1,
   pageSize: 10,
+});
+
+let postPageData = ref({});
+let picturePageData = ref({});
+let userPageData = ref({});
+
+//异步请求获取初始数据，必须在mounted中使用，因为mounted在组件挂载后执行，
+// 直接setup中写异步请求可能在组件挂载前执行，导致页面无法渲染
+const toSearch = async (params: QueryRequest) => {
+  // 后端是根据title搜索帖子,会把searchText作为title搜索
+  postPageData.value = await listPost(params);
+  // 后端是根据搜索文本搜索图片
+  picturePageData.value = await listPicture({ ...params });
+  //后端是根据userName搜索用户
+  userPageData.value = await listUser({
+    ...params,
+    userName: params.searchText,
+  });
+};
+/**
+ * 初始化数据
+ */
+onMounted(async () => {
+  await toSearch(searchParams.value);
 });
 
 // 1. 更新url？之后的参数（query参数）
@@ -63,13 +83,8 @@ const onSearch = async (value: string) => {
       searchText: value,
     },
   });
-
-  // const res = await search({ id: 1 });
-  // console.log("res============>" + res);
-  // console.log("res============>" + JSON.stringify(res));
-  // search({ id: 1 }).then((res) => {
-  //   console.log("res============>" + JSON.stringify(res));
-  // });
+  //直接搜索，不去等watchEffect监听路由变化之后再搜索
+  await toSearch({ ...searchParams.value, searchText: value });
 };
 // 1. tab页签切换,更新路径参数params，并保持query参数
 const onTabChange = (key: string) => {
@@ -84,7 +99,7 @@ const onTabChange = (key: string) => {
   });
 };
 
-// 2. 监听路由变化，更新搜索参数(更新响应式变量值，非url，达到刷新页面还能保持页面状态)
+// 2. 监听路由变化，更新搜索参数(更新响应式变量值），而非url，达到刷新页面还能保持页面状态
 watchEffect(() => {
   searchParams.value = {
     ...searchParams.value,
