@@ -12,7 +12,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/:category",
     name: "category",
     //动态路由的参数值，通过$route.params.category获取
-    component: import("@/views/IndexPage.vue"),
+    component: () => import("@/views/IndexPage.vue"),
   },
 ];
 

@@ -7,7 +7,39 @@ declare namespace API {
     data?: T;
     message?: string;
   };
+  /**
+   * 分页相关参数
+   */
+  type PageRequest = {
+    current?: number;
+    pageSize?: number;
+    sortField?: string;
+    sortOrder?: string;
+  };
 
+  /**
+   * 查询参数
+   */
+  type QueryRequest = {
+    searchText?: string;
+  } & PageRequest;
+  //type 通过&进行类型扩展,interface 通过extends进行类型扩展
+
+  /**
+   * 分页响应对象
+   */
+  type PageObj<T> = {
+    records?: T[];
+    total?: number;
+    size?: number;
+    current?: number;
+    orders?: [];
+    optimizeCountSql?: boolean;
+    searchCount?: boolean;
+    countId?: null;
+    maxLimit?: null;
+    pages?: number;
+  };
   /**
    * 帖子对象
    */
@@ -30,38 +62,19 @@ declare namespace API {
     title?: string;
     url?: string;
   };
-  /**
-   * 查询参数
-   */
-  type QueryRequest = {
-    searchText?: string;
-  } & PageRequest;
-  //type 通过&进行类型扩展,interface 通过extends进行类型扩展
 
-  /**
-   * 分页相关参数
-   */
-  type PageRequest = {
-    current?: number;
-    pageSize?: number;
-    sortField?: string;
-    sortOrder?: string;
+  type User = {
+    id?: number;
+    userName?: string;
+    userAvatar?: string;
+    userProfile?: string;
+    userRole?: string;
+    createTime?: string;
   };
-
-  /**
-   * 分页响应对象
-   */
-  type PageObj<T> = {
-    records?: T[];
-    total?: number;
-    size?: number;
-    current?: number;
-    orders?: [];
-    optimizeCountSql?: boolean;
-    searchCount?: boolean;
-    countId?: null;
-    maxLimit?: null;
-    pages?: number;
+  type SearchVO = {
+    postVOList?: Post[];
+    pictureList?: Picture[];
+    userVOList?: User[];
   };
   //=================未使用=====================
 }

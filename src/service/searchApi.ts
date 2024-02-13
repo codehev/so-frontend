@@ -45,6 +45,18 @@ export async function listUser(body: any, options?: { [key: string]: any }) {
   );
 }
 
+/** 聚合搜索 POST /search/all */
+export async function searchAll(body: any, options?: { [key: string]: any }) {
+  return request<API.BaseResponse<API.SearchVO>>("/search/all", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 //========================= 暂未使用 ==================================、
 
 /** GET /post/get/vo */

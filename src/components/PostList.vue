@@ -1,6 +1,6 @@
 <template>
   <div id="postList">
-    <a-list item-layout="horizontal" :data-source="data.records">
+    <a-list item-layout="horizontal" :data-source="postList">
       <template #renderItem="{ item }">
         <a-list-item>
           <a-list-item-meta :description="item.content">
@@ -21,14 +21,14 @@
 import { defineProps, withDefaults } from "vue";
 
 interface Props {
-  data: any;
+  postList: any[];
 }
 
 /**
  * 组件属性，并给出默认值
  */
 let props = withDefaults(defineProps<Props>(), {
-  data: () => null,
+  postList: () => [],
 });
 </script>
 
