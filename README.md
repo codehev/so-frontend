@@ -1,24 +1,4 @@
-# so-frontend
+# 聚合搜索平台
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+[前端](https://github.com/codehev/so-frontend) |
+[后端](https://github.com/codehev/so-backend)
