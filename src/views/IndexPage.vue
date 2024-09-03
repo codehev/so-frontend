@@ -72,29 +72,32 @@ const loadData = async (params: QueryRequest) => {
     return;
   }
   //后端已参数优化，不需前端参数转换，直接使用searchText即可
+  //改进成聚合接口，一个请求搞定，不需每个tab发一个请求
+  let res = await searchAll(params);
   //if else可以通过设计模式优化
   if (type === "post") {
     // 后端是根据title搜索帖子,会把searchText作为title搜索
-    let res = await searchAll(params);
-    postList.value = res.postVOList;
+    postList.value = res?.postVOList;
   } else if (type === "picture") {
     // 后端是根据searchText搜索图片
-    let res = await searchAll(params);
     pictureList.value = res?.pictureList;
   } else if (type === "user") {
     //后端是根据userName搜索用户
-    let res = await searchAll(params);
     userList.value = res?.userVOList;
   }
 };
 /**
  * 初始化数据
  */
-// onMounted(async () => {
-//   // console.log("mounted=" + JSON.stringify(searchParams.value));
-//   await loadData(initialParams);
-// });
-
+onMounted(async () => {
+  // console.log("mounted=" + JSON.stringify(searchParams.value));
+  await loadData(initialParams);
+});
+/**
+ * 记录搜索状态：把同步状态改成单向，即只允许 url 来改变页面状态，不允许反向
+ * 1. 让用户在操作的时候，改变 url 地址（点击搜索框，搜索内容填充到 url 上？切换 tab 时，也要填充）
+ * 2. 当 url 改变的时候，去改变页面状态（监听 url 的改变）
+ */
 // 1. 更新url？之后的参数（query参数）
 const onSearch = async (value: string) => {
   // todo 也没显示传参，输入框的值怎么来的
@@ -108,6 +111,7 @@ const onSearch = async (value: string) => {
   //直接搜索，不去等watchEffect监听路由变化之后再搜索
   // await loadData({ ...searchParams.value, searchText: value });
 };
+
 // 1. tab页签切换,更新路径参数params，并保持query参数
 const onTabChange = async (key: string) => {
   // console.log("key==========>" + key);
@@ -118,6 +122,7 @@ const onTabChange = async (key: string) => {
       ...searchParams.value,
       type: key,
     },
+    // 动态路由的参数category
     params: {
       category: key,
     },

@@ -71,10 +71,11 @@ declare namespace API {
     userRole?: string;
     createTime?: string;
   };
-  type SearchVO = {
+  type SearchVO<T> = {
     postVOList?: Post[];
     pictureList?: Picture[];
     userVOList?: User[];
+    dataList?: T[];
   };
   //=================未使用=====================
 }

@@ -47,7 +47,7 @@ export async function listUser(body: any, options?: { [key: string]: any }) {
 
 /** 聚合搜索 POST /search/all */
 export async function searchAll(body: any, options?: { [key: string]: any }) {
-  return request<API.BaseResponse<API.SearchVO>>("/search/all", {
+  return request<API.BaseResponse<API.SearchVO<any>>>("/search/all", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
